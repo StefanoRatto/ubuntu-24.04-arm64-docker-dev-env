@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  dev-environment:
+    build: .
+    container_name: dev-environment
+    ports:
+      - "2222:22"      # SSH port
+      - "80:80"        # HTTP port
+      - "3000:3000"    # React/Next.js development port
+      - "8000:8000"    # Development server port
+      - "8080:8080"    # Alternative development port
+    volumes:
+      # Full home directory persistence (VM-like experience)
+      - ./home/dev:/home/dev
+      
+      # SSH authorized_keys file (writable for permission fixing)
+      - ./authorized_keys:/home/dev/.ssh/authorized_keys
+      
+      # Persistent volumes for development tools (caches)
+      - dev_npm_cache:/home/dev/.npm
+      - dev_npm_global:/home/dev/.npm-global
+      - dev_yarn_cache:/home/dev/.cache/yarn
+      - dev_vim_config:/home/dev/.vim
+      - dev_nvim_config:/home/dev/.config/nvim
+      - dev_node_modules:/home/dev/.node_modules_cache
+      - dev_tools_cache:/home/dev/.cache
+      
+    environment:
+      - NODE_ENV=development
+    restart: unless-stopped
+    stdin_open: true
+    tty: true
+
+# Named volumes for persistence
+volumes:
+  dev_npm_cache:
+  dev_npm_global:
+  dev_yarn_cache:
+  dev_vim_config:
+  dev_nvim_config:
+  dev_node_modules:
+  dev_tools_cache: 
